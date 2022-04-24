@@ -1,0 +1,17 @@
+server:
+  port: 8000
+
+management:
+  server:
+    port: 8000
+  endpoints:
+    health:
+      probes:
+        enabled: true
+      livenessState:
+        enabled: true
+      readinessState:
+        enabled: true
+    web:
+      exposure:
+        include: health
