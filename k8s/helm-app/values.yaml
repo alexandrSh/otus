@@ -1,0 +1,39 @@
+app:
+  name: otus-hello
+  secretName: app-secret
+  configmapName: app-configmap
+  portNumber: 8000
+  ingressHost: arch.homework
+  image: alshrm/task-db:v4
+  profile: kuber
+  resources:
+    limits:
+      cpu: "1"
+      memory: "1000Mi"
+    requests:
+      cpu: "0.1"
+      memory: "100Mi"
+db:
+  pgUsername: otus
+  password: b3R1cw==
+  port: 5432
+postgresql:
+  auth:
+    username: "otus"
+    database: "otus"
+    existingSecret: pg-secret
+    enablePostgresUser: false
+  persistence:
+    size: 1Gi
+    enabled: false
+  image:
+    debug: true
+  fullnameOverride: myapp-pg
+  volumePermissions:
+    enabled: true
+
+pgchecker:
+  image:
+    repository: docker.io/busybox
+    tag: 1.32
+    pullPolicy: IfNotPresent

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    app: {{ .Values.app.name }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+      annotations:
+        timestamp: "{{ date "20060102150405" .Release.Time }}"
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:9.6.5
+          command: [ 'sh', '-c', 'until pg_isready -h {{ .Values.postgresql.fullnameOverride }} -p {{ .Values.postgresql.primary.service.ports.postgresql }};  do echo waiting for database; sleep 2; done;' ]
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.image }}
+          command:
+            - java
+            - -server
+            - -Dfile.encoding=UTF-8
+            - -Dspring.profiles.active={{ .Values.app.profile }}
+            - -Djava.security.egd=file:///dev/urandomm
+            - -jar
+            - /app/hello-ok-otus.jar
+          envFrom:
+            - secretRef:
+                name: {{ .Values.app.secretName }}
+            - configMapRef:
+                name: {{ .Values.app.configmapName }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.app.portNumber }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.app.portNumber }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.app.portNumber }}
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            limits:
+              cpu: {{ .Values.app.resources.limits.cpu }}
+              memory: {{ .Values.app.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.app.resources.requests.cpu }}
+              memory: {{ .Values.app.resources.requests.memory }}

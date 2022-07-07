@@ -1,6 +1,26 @@
 server:
   port: 8000
 
+spring:
+  application:
+    name: otus-hello
+  flyway:
+    schemas: otus
+
+user:
+  datasource:
+    hikari:
+      schema: otus
+      pool-name: otus-pgs
+      connection-test-query: SELECT 'Hello I postgres'
+      validation-timeout: 1000
+      maximum-pool-size: 30
+      minimum-idle: 10
+      max-lifetime: 60000
+      idle-timeout: 30000
+      connection-timeout: 3100
+      leak-detection-threshold: 5000
+
 management:
   server:
     port: 8000
@@ -15,3 +35,27 @@ management:
     web:
       exposure:
         include: health
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+user:
+  datasource:
+    hikari:
+      jdbcUrl: jdbc:postgresql://localhost:5432/pgext?currentSchema=pgapg
+      username: otus
+      password: otus
+---
+spring:
+  config:
+    activate:
+      on-profile: kuber
+
+user:
+  datasource:
+    hikari:
+      jdbcUrl: jdbc:postgresql://${APP_DB_HOST}:${APP_DB_PORT}/${APP_DB_NAME}
+      username: ${APP_DB_USERNAME}
+      password: ${APP_DB_PASSWORD}

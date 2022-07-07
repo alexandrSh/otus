@@ -1,5 +1,7 @@
 HELP.md
 target/
+k8s/helm-app/charts
+k8s/helm-app/Chart.lock
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
