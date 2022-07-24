@@ -34,19 +34,26 @@ management:
         enabled: true
     web:
       exposure:
-        include: health
+        include: health,info,metrics,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
 ---
 spring:
   config:
     activate:
       on-profile: local
+  flyway:
+    enabled: false
 
 user:
   datasource:
     hikari:
-      jdbcUrl: jdbc:postgresql://localhost:5432/pgext?currentSchema=pgapg
-      username: otus
-      password: otus
+      jdbcUrl: jdbc:postgresql://localhost:5432/pgext
+      username: pgext
+      password: pgext
 ---
 spring:
   config:

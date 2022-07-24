@@ -4,7 +4,7 @@ app:
   configmapName: app-configmap
   portNumber: 8000
   ingressHost: arch.homework
-  image: alshrm/task-db:v4
+  image: task-db:v5
   profile: kuber
   resources:
     limits:
@@ -18,6 +18,15 @@ db:
   password: b3R1cw==
   port: 5432
 postgresql:
+  primary:
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/path: "/metrics/cluster"
+      prometheus.io/port: "9000"
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
   auth:
     username: "otus"
     database: "otus"
@@ -32,8 +41,6 @@ postgresql:
   volumePermissions:
     enabled: true
 
-pgchecker:
-  image:
-    repository: docker.io/busybox
-    tag: 1.32
-    pullPolicy: IfNotPresent
+metrics:
+  serviceMonitor:
+    enabled: true
