@@ -4,7 +4,7 @@ app:
   configmapName: app-configmap
   portNumber: 8000
   ingressHost: arch.homework
-  image: alshrm/task-db:v4
+  image: alshrm/task-db:v5
   profile: kuber
   resources:
     limits:
